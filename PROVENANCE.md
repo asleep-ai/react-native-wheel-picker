@@ -16,7 +16,10 @@ authored utility module; the package remains an adaptation, not a clean-room imp
 
 LICENSE contains the standard Apache-2.0 text, as used by the company's compose-wheelpicker package. No Compose
 implementation was copied. CI and the publication workflow adapt react-native-alarm's workflow structure.
-Checkout and setup-node use verified v4 commit pins; pnpm/action-setup uses v6.0.9 commit
+Checkout v7.0.1 (`3d3c42e5aac5ba805825da76410c181273ba90b1`) and setup-node v7.0.0
+(`820762786026740c76f36085b0efc47a31fe5020`) match react-native-alarm commit
+`ff1fd5f14d0d0b21fa4b39418da3863adb094926`; both were verified as commit objects through GitHub’s Git API.
+pnpm/action-setup uses v6.0.9 commit
 `0ebf47130e4866e96fce0953f49152a61190b271`, verified through GitHub's commit and annotated-tag APIs on 2026-11-16.
 The earlier pnpm v4 annotated-tag object pin was replaced because it was not a commit. No native sources, images,
 fonts, credentials, telemetry, application protocol or private configuration are included.

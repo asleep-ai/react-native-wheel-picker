@@ -10,6 +10,9 @@ Prepared locally on 2026-11-16. This is not a published package or a device vali
 - Zero runtime dependencies; React and React Native are the only peers. No fonts, images, native modules or app protocol.
 - Apache-2.0 preparation under the explicit coordinator assumption, with factual provenance in PROVENANCE.md.
 - CI prepared with pinned actions, read-only permissions and checkout credential persistence disabled.
+- Checkout/setup-node pins match react-native-alarm ff1fd5f14d; publishing serializes through concurrency group
+  `publish` without cancellation, and disables package-manager caching while CI retains its pnpm cache.
+  No hosted workflow has run for this repository.
 - Tag/main-only publication workflow is ready but dormant: no remote or release refs have been published. No token setup or AI release-note dependency.
 
 ## Validation evidence

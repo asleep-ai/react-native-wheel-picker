@@ -6,7 +6,7 @@ Prepared locally on 2026-11-16. This is not a published package or a device vali
 
 - Independent local repository on main, no remote. No application migration, application pin, or raw Git object changed.
 - CommonJS and declarations produced with TypeScript 6.0.3; React 19.3.0, RN 0.88.1 and Expo 58.0.21 pinned for development.
-- pnpm 11.15.1 workspace with hoisted node linker, one canonical root lockfile and an Expo example workspace.
+- pnpm 12.21.0 workspace with hoisted node linker, one canonical root lockfile and an Expo example workspace.
 - Zero runtime dependencies; React and React Native are the only peers. No fonts, images, native modules or app protocol.
 - Apache-2.0 preparation under the explicit coordinator assumption, with factual provenance in PROVENANCE.md.
 - CI prepared with pinned actions, read-only permissions and checkout credential persistence disabled.

@@ -96,6 +96,20 @@ Use `useWindowDimensions().fontScale` to scale text and row dimensions together,
 The wheel defaults `allowFontScaling` to false to avoid applying font scaling twice. Choose your own cap or fitting
 policy; the library has no application-specific scale cap. Preserve sufficient width and height for large text.
 
+## Fixed viewport composition
+
+Each wheel is an independently scrolling, fixed-height viewport. Around its FlatList it uses the public
+`ScrollView.Context.Provider` with a stable null value, isolating the outer plain ScrollView orientation. On the
+verified RN 0.88.1 this deliberately prevents the generic same-orientation nested-list development diagnostic
+for this bounded control. The provider adds no native View and does not change layout or accessibility.
+It does not reset VirtualizedList's separate measurement/windowing context or suppress any other logs. This is
+not a claim of support for placing the wheel inside a parent FlatList/VirtualizedList; that composition remains
+unverified. Other RN versions and physical nested-scroll/accessibility behavior need their own validation.
+
+`enabled` controls dragging and accessibility actions and announces disabled state; it does not automatically
+change visual appearance. Consumers style their disabled state, for example with opacity on a wrapping View or
+with textStyle. Automatic dimming is not part of either picker’s contract.
+
 ## Pixel snapping
 
 `alignRowHeight(dp, density = PixelRatio.get())` is also exported. It chooses the closest physical pixel count that

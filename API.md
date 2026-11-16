@@ -35,8 +35,17 @@ The initial `contentOffset` remains the selected row's exact offset. `initialScr
 window large enough to include predecessor rows; it must not cause a deferred scroll to overwrite a pre-layout
 controlled update. Cyclic columns retain 100 repeats, 9 initially rendered rows, and a window size of 5.
 
-Disabling prevents new native drags and ignores accessibility steps. It does not cancel pre-existing momentum:
+Disabling does not change appearance; consumers own disabled styling. It prevents new native drags and ignores accessibility steps. It does not cancel pre-existing momentum:
 a wheel already moving can continue to highlight and settle. Programmatic scroll callbacks do not start motion.
+
+## Fixed viewport context boundary
+
+A wheel owns its fixed-height native scroll viewport. Its FlatList is wrapped by the public typed
+`ScrollView.Context.Provider` with value null, so it does not inherit a plain ScrollView's orientation diagnostic
+context. On verified RN 0.88.1 that consumer only controls the generic nested-list development warning;
+measurement, offset conversion and windowing use the separate VirtualizedListContext. That context is unchanged.
+This scoped diagnostic tradeoff adds no native wrapper and does not reset list state or hide unrelated warnings.
+It does not establish support for a parent FlatList/VirtualizedList or for unverified RN versions.
 
 ## Alignment
 

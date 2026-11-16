@@ -25,7 +25,7 @@ Local commands and results:
 | `pnpm typecheck`                                                                              | PASS, strict plus no-unused checks                                                    |
 | `pnpm lint` / `pnpm format:check`                                                             | PASS                                                                                  |
 | `pnpm build`                                                                                  | PASS, CommonJS `lib/index.js` and `lib/index.d.ts`                                    |
-| `pnpm test`                                                                                   | PASS, 3 suites / 36 tests                                                             |
+| `pnpm test`                                                                                   | PASS, 4 suites / 39 tests                                                             |
 | `pnpm pack:check`                                                                             | PASS, exact 22-file allowlist                                                         |
 | `pnpm pack --pack-destination artifacts`                                                      | PASS, local package tarball                                                           |
 | `pnpm consumer:check artifacts/asleep-ai-react-native-wheelpicker-0.1.0.tgz`                  | PASS, real tarball imported by package name in RN Jest and strict TypeScript consumer |
@@ -73,6 +73,25 @@ The earlier production export result is historical and did not cover development
 host-side module initialization and resolution proof, not an Expo Go/device, full App startup, native, performance
 or accessibility result. A dedicated executor must rerun T0–T5 on the physical device; no device action was taken
 for this fix. No dependency version or public library runtime/API changed, and the tarball remains unchanged.
+
+## Fixed viewport composition follow-up
+
+RN 0.88.1 source confirms the plain ScrollView orientation consumer in VirtualizedList only emits its development
+nesting diagnostic. The independent measurement/windowing path instead uses VirtualizedListContext. WheelPicker
+now isolates only the former public context around its fixed-height FlatList; no native View, layout/AX change,
+virtualization switch, private context reset or general logging suppression was added.
+
+A real vertical ScrollView regression failed before the fix for WheelPicker and all three TimePicker columns,
+while an ordinary unisolated FlatList control retained RN's warning. All three pass after isolation; fixed viewport
+layout, untouched predecessor rows, settled callbacks, freeze/a11y state and stable scroll-host instance are covered.
+The prior T4 dimming acceptance criterion was an erroneous application-specific expectation: the library's
+`enabled` contract blocks new editing and announces disabled state, without promising any visual dimming. It is
+clarified as a source contract fact, not reported as a newly passing visual behavior.
+
+The published runtime and README changed, so 0.1.0 was rebuilt, repacked and checked through the actual tarball
+render/type consumer and the development-bundle regression. Its new digest and signed source commit are in the
+coordinator handoff. Physical warning absence and retained behavior require the dedicated executor after review;
+no device/native build or runtime performance result is claimed for this follow-up.
 
 ## Remaining gates before distribution
 

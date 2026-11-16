@@ -3,6 +3,7 @@ import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo,
 import {
   FlatList,
   PixelRatio,
+  ScrollView,
   Text,
   View,
   type AccessibilityActionEvent,
@@ -188,43 +189,46 @@ export const WheelPicker = forwardRef<WheelPickerHandle, WheelPickerProps>(funct
       onAccessibilityAction={onAccessibilityAction}
       style={{ width: width, height: height }}
     >
-      <FlatList
-        ref={scrollRef}
-        testID={testID ? `${testID}-scroll` : undefined}
-        importantForAccessibility="no-hide-descendants"
-        accessibilityElementsHidden
-        scrollEnabled={isEnabled}
-        nestedScrollEnabled
-        showsVerticalScrollIndicator={false}
-        snapToInterval={rowHeight}
-        decelerationRate="fast"
-        initialScrollIndex={Math.max(0, initialRow.current - rowsAbove)}
-        // Keep the initial render window without a deferred scroll overriding a pre-layout host resync.
-        contentOffset={{ x: 0, y: initialRow.current * rowHeight }}
-        data={data}
-        extraData={shown}
-        initialNumToRender={9}
-        windowSize={5}
-        getItemLayout={getItemLayout}
-        keyExtractor={(_, row) => String(row)}
-        renderItem={renderItem}
-        contentContainerStyle={{ paddingVertical: padding }}
-        scrollEventThrottle={16}
-        onScrollBeginDrag={() => {
-          motionRef.current = { kind: "moving" };
-        }}
-        onScroll={(event) => {
-          if (motionRef.current.kind !== "moving") return;
-          const row = indexAtOffset(event.nativeEvent.contentOffset.y, rowHeight, data.length);
-          if (row % labels.length !== liveIndexRef.current % labels.length) setLiveValue(row % labels.length);
-          liveIndexRef.current = row;
-        }}
-        onScrollEndDrag={onScrollEndDrag}
-        onMomentumScrollEnd={settle}
-        onLayout={() =>
-          scrollRef.current?.scrollToOffset({ offset: liveIndexRef.current * rowHeight, animated: false })
-        }
-      />
+      {/* This fixed viewport owns its scroll metrics; isolate the outer plain ScrollView orientation diagnostic. */}
+      <ScrollView.Context.Provider value={null}>
+        <FlatList
+          ref={scrollRef}
+          testID={testID ? `${testID}-scroll` : undefined}
+          importantForAccessibility="no-hide-descendants"
+          accessibilityElementsHidden
+          scrollEnabled={isEnabled}
+          nestedScrollEnabled
+          showsVerticalScrollIndicator={false}
+          snapToInterval={rowHeight}
+          decelerationRate="fast"
+          initialScrollIndex={Math.max(0, initialRow.current - rowsAbove)}
+          // Keep the initial render window without a deferred scroll overriding a pre-layout host resync.
+          contentOffset={{ x: 0, y: initialRow.current * rowHeight }}
+          data={data}
+          extraData={shown}
+          initialNumToRender={9}
+          windowSize={5}
+          getItemLayout={getItemLayout}
+          keyExtractor={(_, row) => String(row)}
+          renderItem={renderItem}
+          contentContainerStyle={{ paddingVertical: padding }}
+          scrollEventThrottle={16}
+          onScrollBeginDrag={() => {
+            motionRef.current = { kind: "moving" };
+          }}
+          onScroll={(event) => {
+            if (motionRef.current.kind !== "moving") return;
+            const row = indexAtOffset(event.nativeEvent.contentOffset.y, rowHeight, data.length);
+            if (row % labels.length !== liveIndexRef.current % labels.length) setLiveValue(row % labels.length);
+            liveIndexRef.current = row;
+          }}
+          onScrollEndDrag={onScrollEndDrag}
+          onMomentumScrollEnd={settle}
+          onLayout={() =>
+            scrollRef.current?.scrollToOffset({ offset: liveIndexRef.current * rowHeight, animated: false })
+          }
+        />
+      </ScrollView.Context.Provider>
     </View>
   );
 });

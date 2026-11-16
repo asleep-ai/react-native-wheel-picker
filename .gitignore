@@ -8,3 +8,4 @@ artifacts/
 .consumer-*/
 example/pnpm-lock.yaml
 .validation/
+.cache/

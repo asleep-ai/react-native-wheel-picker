@@ -1,0 +1,61 @@
+name: Publish (prepared, disabled)
+on:
+  push:
+    tags: ["v*.*.*"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  publish:
+    # Deliberately inert. Enable only through a separately authorized, reviewed release change.
+    if: ${{ false }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Verify main ancestry and matching release version
+        id: version
+        shell: bash
+        run: |
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main
+          if [[ "$GITHUB_REF" != refs/tags/* && "$GITHUB_REF" != refs/heads/main ]]; then exit 1; fi
+          VERSION=$(node -p 'require("./package.json").version')
+          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then [[ "$GITHUB_REF" == "refs/tags/v$VERSION" ]]; fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build && pnpm typecheck && pnpm test && pnpm lint && pnpm format:check && pnpm pack:check
+      - run: npm install --global npm@11.18.0
+      - name: Check registry without hiding network failures
+        id: registry
+        shell: bash
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          if npm view "@asleep-ai/react-native-wheelpicker@$VERSION" version --json > registry.json 2> registry-error.txt; then
+            echo 'publish=false' >> "$GITHUB_OUTPUT"
+          elif node -e 'const j=require("./registry.json"); process.exit(j.error?.code === "E404" ? 0 : 1)'; then
+            echo 'publish=true' >> "$GITHUB_OUTPUT"
+          else
+            cat registry-error.txt
+            exit 1
+          fi
+      - name: Publish with trusted publishing
+        if: steps.registry.outputs.publish == 'true'
+        run: npm publish --access public
+      - name: Create release with static changelog
+        if: steps.registry.outputs.publish == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: gh release create "v$VERSION" --target "$GITHUB_SHA" --title "v$VERSION" --notes-file CHANGELOG.md

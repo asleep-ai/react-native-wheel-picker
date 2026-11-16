@@ -1,0 +1,10 @@
+node_modules/
+lib/
+*.tgz
+coverage/
+example/dist*/
+.expo/
+artifacts/
+.consumer-*/
+example/pnpm-lock.yaml
+.validation/

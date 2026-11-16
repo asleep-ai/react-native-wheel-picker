@@ -1,0 +1,9 @@
+const path = require("node:path");
+const { getDefaultConfig } = require("expo/metro-config");
+const root = path.resolve(__dirname, "..");
+const config = getDefaultConfig(__dirname);
+config.watchFolders = [root];
+config.resolver.nodeModulesPaths = [path.join(root, "node_modules")];
+config.resolver.extraNodeModules = { "@asleep-ai/react-native-wheelpicker": root };
+config.resolver.disableHierarchicalLookup = true;
+module.exports = config;

@@ -1,0 +1,54 @@
+{
+  "name": "@asleep-ai/react-native-wheelpicker",
+  "version": "0.1.0",
+  "description": "Controlled, accessible virtualized wheel and 12-hour time pickers for React Native",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/asleep-ai/react-native-wheelpicker"
+  },
+  "files": [
+    "lib",
+    "src",
+    "!src/**/__tests__",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "sideEffects": false,
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "node scripts/clean.cjs",
+    "typecheck": "tsc --noEmit",
+    "test": "jest --runInBand",
+    "lint": "oxlint src example scripts",
+    "format": "oxfmt .",
+    "format:check": "oxfmt --check .",
+    "pack:check": "node scripts/pack-check.cjs",
+    "prepublishOnly": "pnpm clean && pnpm build && pnpm test",
+    "consumer:check": "node scripts/consumer-check.cjs"
+  },
+  "devDependencies": {
+    "@babel/core": "7.29.7",
+    "@react-native/babel-preset": "0.88.1",
+    "@react-native/jest-preset": "0.88.1",
+    "@testing-library/react-native": "14.1.0",
+    "@types/jest": "30.0.0",
+    "@types/node": "24.10.1",
+    "@types/react": "19.3.0",
+    "expo": "58.0.21",
+    "jest": "30.5.2",
+    "oxfmt": "0.60.0",
+    "oxlint": "1.75.0",
+    "react": "19.3.0",
+    "react-native": "0.88.1",
+    "typescript": "6.0.3"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": ">=0.88.0"
+  },
+  "packageManager": "pnpm@11.15.1"
+}

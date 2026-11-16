@@ -15,13 +15,22 @@ Prepared locally on 2026-11-16. This is not a published package or a device vali
   No hosted workflow has run for this repository.
 - Tag/main-only publication workflow is ready but dormant: no remote or release refs have been published. No token setup or AI release-note dependency.
 
+## Dependency build-policy correction
+
+The first hosted CI run on dacbeec failed in all three jobs at dependency installation with
+`ERR_PNPM_IGNORED_BUILDS` for `@parcel/watcher@2.6.0`; project checks were skipped. The workspace now explicitly
+denies that package’s unused source-build script while retaining its optional prebuilt platform packages,
+strict dependency-build review and frozen-lockfile installation. Earlier local installs with `--ignore-scripts`
+did not exercise this hosted-install gate. Fresh exact-source installation with an empty scoped store and the
+CI-equivalent checks are recorded in the coordinator’s CI-fix handoff; hosted success requires a new actual run.
+
 ## Validation evidence
 
 Local commands and results:
 
 | Gate                                                                                          | Result                                                                                |
 | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `pnpm install --frozen-lockfile --ignore-scripts`                                             | PASS                                                                                  |
+| `pnpm install --frozen-lockfile`                                                              | See fresh-source CI-fix handoff                                                       |
 | `pnpm typecheck`                                                                              | PASS, strict plus no-unused checks                                                    |
 | `pnpm lint` / `pnpm format:check`                                                             | PASS                                                                                  |
 | `pnpm build`                                                                                  | PASS, CommonJS `lib/index.js` and `lib/index.d.ts`                                    |

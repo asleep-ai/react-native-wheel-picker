@@ -2,3 +2,6 @@ packages:
   - "."
   - "example"
 nodeLinker: hoisted
+# Prebuilt optional platform packages provide the binary; the source-build script is unneeded.
+allowBuilds:
+  "@parcel/watcher": false

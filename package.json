@@ -1,11 +1,11 @@
 {
-  "name": "@asleep-ai/react-native-wheelpicker",
+  "name": "@asleep-ai/react-native-wheel-picker",
   "version": "0.1.0",
   "description": "Controlled, accessible virtualized wheel and 12-hour time pickers for React Native",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/asleep-ai/react-native-wheelpicker"
+    "url": "https://github.com/asleep-ai/react-native-wheel-picker"
   },
   "files": [
     "lib",

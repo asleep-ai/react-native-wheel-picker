@@ -14,7 +14,7 @@
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
-      "@asleep-ai/react-native-wheelpicker": ["./src"]
+      "@asleep-ai/react-native-wheel-picker": ["./src"]
     }
   },
   "include": ["src", "example/App.tsx"]

@@ -1,10 +1,10 @@
 {
-  "name": "wheelpicker-example",
+  "name": "wheel-picker-example",
   "version": "0.1.0",
   "private": true,
   "main": "index.js",
   "dependencies": {
-    "@asleep-ai/react-native-wheelpicker": "workspace:*",
+    "@asleep-ai/react-native-wheel-picker": "workspace:*",
     "expo": "58.0.21",
     "react": "19.3.0",
     "react-native": "0.88.1"

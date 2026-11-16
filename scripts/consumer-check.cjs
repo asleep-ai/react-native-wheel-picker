@@ -5,12 +5,12 @@ const path = require("node:path");
 const root = path.resolve(__dirname, "..");
 const tarball = path.resolve(process.argv[2]);
 const consumer = fs.mkdtempSync(path.join(root, ".consumer-"));
-const unpacked = path.join(consumer, "node_modules/@asleep-ai/react-native-wheelpicker");
+const unpacked = path.join(consumer, "node_modules/@asleep-ai/react-native-wheel-picker");
 fs.mkdirSync(unpacked, { recursive: true });
 execFileSync("tar", ["-xzf", tarball, "--strip-components=1", "-C", unpacked]);
 fs.writeFileSync(
   path.join(consumer, "consumer.tsx"),
-  `import { WheelPicker, TimePicker, alignRowHeight, type WheelPickerHandle, type TimePickerHandle, type Time24 } from "@asleep-ai/react-native-wheelpicker";
+  `import { WheelPicker, TimePicker, alignRowHeight, type WheelPickerHandle, type TimePickerHandle, type Time24 } from "@asleep-ai/react-native-wheel-picker";
 import { createRef } from "react";
 const time: Time24 = {hour: 7, minute: 0};
 export const wheel = <WheelPicker ref={createRef<WheelPickerHandle>()} items={["A", "B"]} selectedIndex={0} onSelect={() => {}} accessibilityLabel="Value" width={90} height={216} rowHeight={alignRowHeight(80)} />;
@@ -39,7 +39,7 @@ fs.writeFileSync(
   path.join(consumer, "consumer.test.cjs"),
   `const React = require("react");
 const {render} = require("@testing-library/react-native");
-const {WheelPicker, TimePicker, alignRowHeight} = require("@asleep-ai/react-native-wheelpicker");
+const {WheelPicker, TimePicker, alignRowHeight} = require("@asleep-ai/react-native-wheel-picker");
 it("imports the actual CommonJS tarball and renders its public API", async () => {
     expect(typeof TimePicker.render).toBe("function");
     expect(alignRowHeight(80, 2.625)).toBeGreaterThan(0);

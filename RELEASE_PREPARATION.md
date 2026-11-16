@@ -28,7 +28,7 @@ Local commands and results:
 | `pnpm test`                                                                                   | PASS, 4 suites / 39 tests                                                             |
 | `pnpm pack:check`                                                                             | PASS, exact 22-file allowlist                                                         |
 | `pnpm pack --pack-destination artifacts`                                                      | PASS, local package tarball                                                           |
-| `pnpm consumer:check artifacts/asleep-ai-react-native-wheelpicker-0.1.0.tgz`                  | PASS, real tarball imported by package name in RN Jest and strict TypeScript consumer |
+| `pnpm consumer:check artifacts/asleep-ai-react-native-wheel-picker-0.1.0.tgz`                 | PASS, real tarball imported by package name in RN Jest and strict TypeScript consumer |
 | `cd example && pnpm exec expo export --platform all --output-dir dist-review --max-workers 2` | PASS, iOS and Android static Hermes JS exports                                        |
 
 Behavioral tests cover live visual highlights and committed accessibility values, freeze/late callbacks, host and
@@ -53,7 +53,7 @@ dereference were verified through GitHub's read-only API. The release-only workf
 the 22-file publication artifact unchanged.
 
 The final tarball digest and exact signed commit are supplied in the coordinator handoff; the tarball is excluded
-from Git. Recompute the digest with `shasum -a 256 artifacts/asleep-ai-react-native-wheelpicker-0.1.0.tgz` before any
+from Git. Recompute the digest with `shasum -a 256 artifacts/asleep-ai-react-native-wheel-picker-0.1.0.tgz` before any
 future distribution. Do not treat an earlier tarball as evidence for later source inputs.
 
 ## Expo development initialization regression
@@ -71,8 +71,8 @@ The pre-fix bundle fails; the corrected bundle passes. Evidence remains under ig
 
 The earlier production export result is historical and did not cover development HMR. The new regression is
 host-side module initialization and resolution proof, not an Expo Go/device, full App startup, native, performance
-or accessibility result. A dedicated executor must rerun T0–T5 on the physical device; no device action was taken
-for this fix. No dependency version or public library runtime/API changed, and the tarball remains unchanged.
+or accessibility result. The subsequent bounded Android evidence is recorded below; no device action was taken
+for the host-side fix. No dependency version or public library runtime/API changed, and the tarball remains unchanged.
 
 ## Fixed viewport composition follow-up
 
@@ -90,21 +90,39 @@ clarified as a source contract fact, not reported as a newly passing visual beha
 
 The published runtime and README changed, so 0.1.0 was rebuilt, repacked and checked through the actual tarball
 render/type consumer and the development-bundle regression. Its new digest and signed source commit are in the
-coordinator handoff. Physical warning absence and retained behavior require the dedicated executor after review;
-no device/native build or runtime performance result is claimed for this follow-up.
+coordinator handoff. Subsequent bounded physical warning-absence and behavior evidence is recorded below;
+no production/native-build or runtime performance result is claimed for this follow-up.
+
+## Dated Android evidence and identity rename — 2026-11-16
+
+Claude’s final standalone R9 verdict records PASS for Android Expo Go SDK 58 development-mode functionality on
+Samsung SM-X133, with official Expo Go 58.0.5. The executed source was signed 9f27ea51 and
+artifact SHA256 `903e2b6ee90f8c5d3fba2428c04f641818a567813e2a7d0e65b2014bfbeb03f0`, served from compiled lib
+matching that tarball. Fresh untouched predecessor rows, fruit/minute edits, disabled blocking and re-enabled
+editing, sampled freeze agreement/stability and bounded nested-warning absence passed in the observed session.
+Wrap and bound evidence was reused from retry-1; the exact freeze tap instant was not observable.
+
+The coordinated identity is now npm `@asleep-ai/react-native-wheel-picker` and proposed GitHub repository
+`asleep-ai/react-native-wheel-picker`, retaining version 0.1.0 and Apache-2.0. The local folder is unchanged.
+The rename checks compare every compiled JS/declaration file with the physically tested artifact. Identical lib
+bytes carry the implementation evidence forward; they do not establish a new-name device run or a broader runtime
+claim. The new tarball digest, exact renamed source commit and byte comparison are in the coordinator handoff.
+
+Current gates: Android development-mode evidence PASS with the stated bounds; iOS, TalkBack/VoiceOver,
+production/Hermes performance, latency, native before/after comparison and application integration NOT RUN.
+Hosted GitHub CI and npm publication are also NOT RUN. No new device action was performed for the rename.
 
 ## Remaining gates before distribution
 
-1. Coordinator-managed Claude source/API, test, package, and license/provenance review of the exact final commit.
-2. Separate physical QA on Android tablet 2 and iOS: initial predecessor visibility before touch, wraps, controlled
-   resync, freeze, large text, and TalkBack/VoiceOver. Expo Go versus dev-build support is unverified.
-3. Explicit authorization to create the proposed GitHub repository, set its remote, push, or open a PR. None done.
-4. Explicit authorization and maintainer scope access for npm distribution. Trusted-publisher/first-publication
-   requirements must be checked against current npm documentation at that time; none are assumed configured.
-5. Authorize actual publication only after the preceding gates. The prepared workflow verifies checked-out SHA,
-   main ancestry, semver/tag agreement, existing peeled version-tag identity, and registry state and existing-version contents before publishing
-   the tested tarball, then reconciles the GitHub Release even when that npm version already exists. Workflow
-   preparation does not establish hosted CI success or grant remote publication authority.
+1. Coordinator-managed review of the exact renamed source, metadata and artifact.
+2. Root is authorized to create the public GitHub repository, add origin and push main after review, then observe
+   actual GitHub Actions on that exact commit. These actions have not been performed by this worker.
+3. iOS and screen-reader QA remain separate physical gates; Android evidence above is limited to the observed
+   Expo Go SDK 58 development-mode sessions and identical compiled implementation.
+4. npm distribution remains NOT RUN and requires scope access and trusted-publisher/first-publication setup and
+   release authorization. No credentials or publisher configuration are assumed configured.
+5. The prepared release workflow verifies checked-out SHA, main ancestry, semver/tag agreement, existing peeled
+   version-tag identity, and registry state and existing-version contents before publishing the tested tarball,
+   then reconciles the GitHub Release. Preparation does not establish hosted CI success or npm availability.
 
-No GitHub repository, npm version, release, native build, EAS build, device run, or public availability has been
-created or verified by this preparation.
+No remote repository, push, GitHub Release or npm publication was performed by this rename preparation.

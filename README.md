@@ -1,21 +1,21 @@
 # React Native WheelPicker
 
 Controlled, virtualized string wheels and a 12-hour time picker for React Native. Local release preparation for
-`@asleep-ai/react-native-wheelpicker` 0.1.0; this repository and version have not been published.
+`@asleep-ai/react-native-wheel-picker` 0.1.0; this repository and version have not been published.
 
 ## Install
 
 After an authorized npm release:
 
 ```sh
-pnpm add @asleep-ai/react-native-wheelpicker
+pnpm add @asleep-ai/react-native-wheel-picker
 ```
 
 React and React Native are peer dependencies. The package has no runtime dependencies and no native module.
 
 ```tsx
 import { useState } from "react";
-import { WheelPicker } from "@asleep-ai/react-native-wheelpicker";
+import { WheelPicker } from "@asleep-ai/react-native-wheel-picker";
 
 function FruitPicker() {
   const [index, setIndex] = useState(0);
@@ -121,8 +121,10 @@ height and vertical padding. Snap interval and `getItemLayout` use the same alig
 
 Source tests and static JS exports are checked with React 19.3.0, React Native 0.88.1 (New Architecture), Expo
 58.0.21, and TypeScript 6.0.3. Peers declare `react: *` and `react-native: >=0.88.0`; this is a compatibility target,
-not evidence that all those versions work. Other React/RN versions remain unverified. No standalone package
-Android or iOS runtime, Expo Go/dev-build compatibility, frame timing, or physical accessibility result is claimed.
+not evidence that all those versions work. Other React/RN versions remain unverified. Dated Android Expo Go SDK 58
+development-mode evidence for the identical compiled implementation is summarized in RELEASE_PREPARATION.md;
+this rename is not a new-name device run. iOS, release/dev-build compatibility, frame timing and physical
+accessibility remain unverified.
 
 ```sh
 pnpm install --frozen-lockfile

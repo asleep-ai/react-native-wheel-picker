@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "WheelPicker Example",
-    "slug": "react-native-wheelpicker-example",
+    "name": "Wheel Picker Example",
+    "slug": "react-native-wheel-picker-example",
     "version": "0.1.0",
     "platforms": ["ios", "android"]
   }

@@ -61,7 +61,7 @@ jobs:
         env:
           VERSION: ${{ steps.version.outputs.version }}
           TARBALL: ${{ steps.package.outputs.tarball }}
-        run: node scripts/check-registry.cjs "@asleep-ai/react-native-wheelpicker@$VERSION" "$TARBALL" >> "$GITHUB_OUTPUT"
+        run: node scripts/check-registry.cjs "@asleep-ai/react-native-wheel-picker@$VERSION" "$TARBALL" >> "$GITHUB_OUTPUT"
       - name: Publish with trusted publishing
         if: steps.registry.outputs.publish == 'true'
         env:

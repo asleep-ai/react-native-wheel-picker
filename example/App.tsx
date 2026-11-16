@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { Button, ScrollView, Switch, Text, useWindowDimensions, View } from "react-native";
-import { TimePicker, WheelPicker, type TimePickerHandle } from "@asleep-ai/react-native-wheelpicker";
+import { TimePicker, WheelPicker, type TimePickerHandle } from "@asleep-ai/react-native-wheel-picker";
 
 export default function App() {
   const [fruit, setFruit] = useState(1);

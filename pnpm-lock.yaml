@@ -53,7 +53,7 @@ importers:
 
   example:
     dependencies:
-      '@asleep-ai/react-native-wheelpicker':
+      '@asleep-ai/react-native-wheel-picker':
         specifier: workspace:*
         version: link:..
       expo:

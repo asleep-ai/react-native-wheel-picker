@@ -38,11 +38,16 @@ latest-value merging, and F1 contentOffset were caught by the relevant tests. Ev
 logs remain locally under ignored `.validation/`. Static exports and consumer scratch evidence are ignored,
 excluded from the package, and retained locally. The tarball consumer inherits repository development dependencies, so it is not an isolated install or a full peer-range check. Runtime/device/performance claims remain NOT RUN.
 
-Review follow-up validation also exercised the actual workflow shell blocks in local fixtures: eight release-ref,
-annotated-tag and version cases passed; five mocked registry/release cases passed, including missing-release
-reconciliation after an already-published npm version and rejection of non-E404 registry failures. These are local
-script checks, not hosted CI, OIDC, registry publication or GitHub Release proof. The pnpm action commit and
-annotated-tag dereference were verified through GitHub's read-only API.
+Review follow-up validation exercised the actual workflow ref/version shell block in eight local cases. The
+existing-version content guard has 14 native Node test fixtures (`node --test scripts/check-registry.test.cjs`):
+identical SHA512 integrity, different gzip bytes with identical extracted contents, different contents, E404,
+non-E404 errors, missing/malformed integrity, missing tarball URL, fetch/integrity failure, traversal, symlinks and
+hardlinks. Existing versions only permit release recovery after this comparison; a different source using the
+same npm version fails before GitHub Release reconciliation. Archive entries are validated before native tar
+extracts regular files into fresh temporary directories; comparison covers the exact file names and bytes.
+These are local checks, not hosted CI, OIDC or publication proof. The pnpm action commit and annotated-tag
+dereference were verified through GitHub's read-only API. The release-only workflow/helper/docs changes leave
+the 22-file publication artifact unchanged.
 
 The final tarball digest and exact signed commit are supplied in the coordinator handoff; the tarball is excluded
 from Git. Recompute the digest with `shasum -a 256 artifacts/asleep-ai-react-native-wheelpicker-0.1.0.tgz` before any
@@ -57,7 +62,7 @@ future distribution. Do not treat an earlier tarball as evidence for later sourc
 4. Explicit authorization and maintainer scope access for npm distribution. Trusted-publisher/first-publication
    requirements must be checked against current npm documentation at that time; none are assumed configured.
 5. Authorize actual publication only after the preceding gates. The prepared workflow verifies checked-out SHA,
-   main ancestry, semver/tag agreement, existing peeled version-tag identity, and registry state before publishing
+   main ancestry, semver/tag agreement, existing peeled version-tag identity, and registry state and existing-version contents before publishing
    the tested tarball, then reconciles the GitHub Release even when that npm version already exists. Workflow
    preparation does not establish hosted CI success or grant remote publication authority.
 

@@ -50,20 +50,15 @@ jobs:
           pnpm consumer:check "$TARBALL"
           echo "tarball=$TARBALL" >> "$GITHUB_OUTPUT"
       - run: npm install --global npm@11.18.0
-      - name: Check registry without hiding network failures
+      - name: Test existing-version content guard
+        run: node --test scripts/check-registry.test.cjs
+      - name: Check registry and existing package contents
         id: registry
         shell: bash
         env:
           VERSION: ${{ steps.version.outputs.version }}
-        run: |
-          if npm view "@asleep-ai/react-native-wheelpicker@$VERSION" version --json > registry.json 2>&1; then
-            echo 'publish=false' >> "$GITHUB_OUTPUT"
-          elif grep -Eq '"code"[[:space:]]*:[[:space:]]*"E404"' registry.json; then
-            echo 'publish=true' >> "$GITHUB_OUTPUT"
-          else
-            cat registry.json
-            exit 1
-          fi
+          TARBALL: ${{ steps.package.outputs.tarball }}
+        run: node scripts/check-registry.cjs "@asleep-ai/react-native-wheelpicker@$VERSION" "$TARBALL" >> "$GITHUB_OUTPUT"
       - name: Publish with trusted publishing
         if: steps.registry.outputs.publish == 'true'
         env:

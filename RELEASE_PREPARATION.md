@@ -56,6 +56,24 @@ The final tarball digest and exact signed commit are supplied in the coordinator
 from Git. Recompute the digest with `shasum -a 256 artifacts/asleep-ai-react-native-wheelpicker-0.1.0.tgz` before any
 future distribution. Do not treat an earlier tarball as evidence for later source inputs.
 
+## Expo development initialization regression
+
+A physical Expo Go attempt at 4dc17057 stopped before T0: Expo HMR resolved the root Jest tooling’s
+pretty-format 30.5.1 ESM wrapper and threw before the example rendered. The saved development bundle reproduces
+that formatter-initialization error with Metro’s real module loader. No picker runtime behavior passed.
+
+The example now inherits Expo’s monorepo module paths and hierarchical lookup, keeping the package alias and
+compiled lib entry. `node scripts/example-bundle-check.cjs` uses the pinned official Expo `export:embed` CLI with
+`--dev true --minify false` (JavaScript only) and a 120-second timeout. It checks the actual HMR formatter
+initialization, pretty-format 29.7.0 resolution, one React/RN/JSX-runtime module ID shared by App and both compiled
+pickers, the compiled package entry and absence of a package src bypass. CI runs this command after build.
+The pre-fix bundle fails; the corrected bundle passes. Evidence remains under ignored `.validation/` locally.
+
+The earlier production export result is historical and did not cover development HMR. The new regression is
+host-side module initialization and resolution proof, not an Expo Go/device, full App startup, native, performance
+or accessibility result. A dedicated executor must rerun T0–T5 on the physical device; no device action was taken
+for this fix. No dependency version or public library runtime/API changed, and the tarball remains unchanged.
+
 ## Remaining gates before distribution
 
 1. Coordinator-managed Claude source/API, test, package, and license/provenance review of the exact final commit.

@@ -23,6 +23,8 @@ jobs:
       - run: pnpm build
       - run: test -f lib/index.js && test -f lib/index.d.ts
       - run: pnpm test
+      - name: Check Expo development bundle
+        run: node scripts/example-bundle-check.cjs
       - run: pnpm pack --pack-destination artifacts
       - name: Check the versioned tarball consumer
         run: |

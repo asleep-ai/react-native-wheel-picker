@@ -239,9 +239,11 @@ it("keeps programmatic scrolling idle and AM/PM accessibility steps bounded", as
   highlighted("AM");
   expect(ref.current?.freeze()).toBeNull();
   await fireEvent(screen.getByTestId("wheel"), "accessibilityAction", { nativeEvent: { actionName: "decrement" } });
-  expect(select).toHaveBeenLastCalledWith(0);
+  expect(select).not.toHaveBeenCalled();
   await fireEvent(screen.getByTestId("wheel"), "accessibilityAction", { nativeEvent: { actionName: "increment" } });
   expect(select).toHaveBeenLastCalledWith(1);
+  await fireEvent(screen.getByTestId("wheel"), "accessibilityAction", { nativeEvent: { actionName: "increment" } });
+  expect(select).toHaveBeenCalledTimes(1);
 });
 
 it.each([true, false])(
@@ -309,4 +311,45 @@ it("memoizes unchanged rows while the old and new highlighted rows render", asyn
   } finally {
     textRender.mockRestore();
   }
+});
+
+it("compounds default accessibility steps before echo and resets the pending base on host resync", async () => {
+  const select = jest.fn();
+  const items = ["A", "B", "C", "D"];
+  const props = { testID: "wheel", items, selectedIndex: 0, onSelect: select, accessibilityLabel: "Value", ...metrics };
+  const view = await render(<WheelPicker {...props} />);
+  const action = screen.getByTestId("wheel").props.onAccessibilityAction;
+  await act(async () => {
+    action({ nativeEvent: { actionName: "increment" } });
+    action({ nativeEvent: { actionName: "increment" } });
+  });
+  expect(select.mock.calls).toEqual([[1], [2]]);
+  expect(screen.getByTestId("wheel").props.accessibilityValue).toEqual({ text: "A" });
+  await view.rerender(<WheelPicker {...props} selectedIndex={3} />);
+  await fireEvent(screen.getByTestId("wheel"), "accessibilityAction", { nativeEvent: { actionName: "decrement" } });
+  expect(select.mock.calls).toEqual([[1], [2], [2]]);
+  expect(screen.getByTestId("wheel").props.accessibilityValue).toEqual({ text: "D" });
+});
+
+it("keeps custom accessibility step ownership without default commits", async () => {
+  const select = jest.fn();
+  const customStep = jest.fn();
+  await render(
+    <WheelPicker
+      testID="wheel"
+      items={labels}
+      selectedIndex={0}
+      onSelect={select}
+      onStep={customStep}
+      accessibilityLabel="Period"
+      {...metrics}
+    />,
+  );
+  const action = screen.getByTestId("wheel").props.onAccessibilityAction;
+  await act(async () => {
+    action({ nativeEvent: { actionName: "increment" } });
+    action({ nativeEvent: { actionName: "increment" } });
+  });
+  expect(customStep.mock.calls).toEqual([[1], [1]]);
+  expect(select).not.toHaveBeenCalled();
 });

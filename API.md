@@ -18,7 +18,7 @@ same batch. Column wrapping is independent: minute 59 to 00 does not advance the
 change AM/PM.
 
 Accessibility steps interrupt motion. `WheelPicker.onStep`, if supplied, is responsible for updating controlled
-state; otherwise the picker calls `onSelect` with a bounded or wrapped step from `selectedIndex`. Numeric strings
+state; otherwise the picker calls `onSelect` with a bounded or wrapped step, compounding pending default steps until the parent echoes a value. Bounded no-op steps emit no callback. A changed `selectedIndex` resets that pending base. Numeric strings
 such as "07" are spoken as "7" unless `accessibilityValueText` overrides this. Assistive technology receives the
 committed value during scrolling, not each intermediate row.
 

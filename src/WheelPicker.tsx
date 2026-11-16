@@ -70,9 +70,20 @@ export const WheelPicker = forwardRef<WheelPickerHandle, WheelPickerProps>(funct
   } = props;
   const rowHeight = alignRowHeight(props.rowHeight);
   const height = PixelRatio.roundToNearestPixel(props.height);
+  const pendingIndex = useRef(index);
+  const controlledIndex = useRef(index);
+  if (controlledIndex.current !== index) {
+    controlledIndex.current = index;
+    pendingIndex.current = index;
+  }
   const onUserStep = (delta: 1 | -1) => {
     if (onStep) onStep(delta);
-    else onUserSelect(step(index, delta, labels.length, cyclic));
+    else {
+      const next = step(pendingIndex.current, delta, labels.length, cyclic);
+      if (next === pendingIndex.current) return;
+      pendingIndex.current = next;
+      onUserSelect(next);
+    }
   };
   const scrollRef = useRef<FlatList<string> | null>(null);
   const repeats = cyclic ? REPEATS : 1;
@@ -142,6 +153,7 @@ export const WheelPicker = forwardRef<WheelPickerHandle, WheelPickerProps>(funct
     const settled = indexAtOffset(event.nativeEvent.contentOffset.y, rowHeight, data.length);
     liveIndexRef.current = settled;
     const value = settled % labels.length;
+    pendingIndex.current = value;
     if (value !== index) onUserSelect(value);
   };
 

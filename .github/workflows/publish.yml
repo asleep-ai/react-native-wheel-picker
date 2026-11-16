@@ -1,4 +1,4 @@
-name: Publish (prepared, disabled)
+name: Publish to npm
 on:
   push:
     tags: ["v*.*.*"]
@@ -7,8 +7,6 @@ permissions:
   contents: read
 jobs:
   publish:
-    # Deliberately inert. Enable only through a separately authorized, reviewed release change.
-    if: ${{ false }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -22,19 +20,35 @@ jobs:
         id: version
         shell: bash
         run: |
-          git merge-base --is-ancestor "$GITHUB_SHA" origin/main
+          RELEASE_SHA=$(git rev-parse HEAD)
+          if [[ "$RELEASE_SHA" != "$(git rev-parse "$GITHUB_SHA^{commit}")" ]]; then exit 1; fi
+          git merge-base --is-ancestor "$RELEASE_SHA" origin/main || exit 1
           if [[ "$GITHUB_REF" != refs/tags/* && "$GITHUB_REF" != refs/heads/main ]]; then exit 1; fi
           VERSION=$(node -p 'require("./package.json").version')
-          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
-          if [[ "$GITHUB_REF" == refs/tags/* ]]; then [[ "$GITHUB_REF" == "refs/tags/v$VERSION" ]]; fi
+          if [[ ! "$VERSION" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then exit 1; fi
+          if [[ "$GITHUB_REF" == refs/tags/* && "$GITHUB_REF" != "refs/tags/v$VERSION" ]]; then exit 1; fi
+          if git show-ref --verify --quiet "refs/tags/v$VERSION"; then
+            TAG_SHA=$(git rev-parse "refs/tags/v$VERSION^{commit}")
+            if [[ "$TAG_SHA" != "$RELEASE_SHA" ]]; then
+              echo "::error::Existing v$VERSION tag targets a different commit"
+              exit 1
+            fi
+          fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
-          node-version: "22"
+          node-version: "^22.14.0"
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm build && pnpm typecheck && pnpm test && pnpm lint && pnpm format:check && pnpm pack:check
+      - name: Pack and verify the exact publication artifact
+        id: package
+        run: |
+          pnpm pack --pack-destination artifacts
+          TARBALL=$(node -p "'artifacts/' + require('./package.json').name.replace('@', '').replace('/', '-') + '-' + require('./package.json').version + '.tgz'")
+          pnpm consumer:check "$TARBALL"
+          echo "tarball=$TARBALL" >> "$GITHUB_OUTPUT"
       - run: npm install --global npm@11.18.0
       - name: Check registry without hiding network failures
         id: registry
@@ -42,20 +56,26 @@ jobs:
         env:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
-          if npm view "@asleep-ai/react-native-wheelpicker@$VERSION" version --json > registry.json 2> registry-error.txt; then
+          if npm view "@asleep-ai/react-native-wheelpicker@$VERSION" version --json > registry.json 2>&1; then
             echo 'publish=false' >> "$GITHUB_OUTPUT"
-          elif node -e 'const j=require("./registry.json"); process.exit(j.error?.code === "E404" ? 0 : 1)'; then
+          elif grep -Eq '"code"[[:space:]]*:[[:space:]]*"E404"' registry.json; then
             echo 'publish=true' >> "$GITHUB_OUTPUT"
           else
-            cat registry-error.txt
+            cat registry.json
             exit 1
           fi
       - name: Publish with trusted publishing
         if: steps.registry.outputs.publish == 'true'
-        run: npm publish --access public
-      - name: Create release with static changelog
-        if: steps.registry.outputs.publish == 'true'
+        env:
+          TARBALL: ${{ steps.package.outputs.tarball }}
+        run: npm publish "$TARBALL" --access public
+      - name: Reconcile release with static changelog
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.version.outputs.version }}
-        run: gh release create "v$VERSION" --target "$GITHUB_SHA" --title "v$VERSION" --notes-file CHANGELOG.md
+        run: |
+          if gh release view "v$VERSION" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release v$VERSION already exists"
+          else
+            gh release create "v$VERSION" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "v$VERSION" --notes-file CHANGELOG.md
+          fi

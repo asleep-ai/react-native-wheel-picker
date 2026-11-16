@@ -126,14 +126,14 @@ Static exports use `cd example && pnpm exec expo export --platform all --output-
 
 Run `pnpm typecheck`, `pnpm lint`, `pnpm format:check`, `pnpm build`, `pnpm test`, and `pnpm pack:check`.
 `pnpm pack --pack-destination artifacts` creates a local tarball; `pnpm consumer:check <tarball>` imports its public
-CommonJS entry point and checks its declarations without source aliases. See `RELEASE_PREPARATION.md` for gates.
-No release action is enabled by this local preparation.
+CommonJS entry point and checks its declarations without source aliases. This smoke test inherits this repository’s
+installed development dependencies; it is not an isolated install or a full peer-version compatibility check. See `RELEASE_PREPARATION.md` for gates.
+The tag/main-only publication workflow is prepared for use; it remains dormant because no remote or release ref has been published.
 
 ## License and provenance
 
 Copyright 2026 Asleep, Inc. Prepared under Apache-2.0; see LICENSE. Wheel behavior derives from company-authored
 code by Hankyeol Kyung in a private UNLICENSED application repository, commit
 `ea86afc9fbdbaa1a18876a85788c643ce2e44385`. Generalized public props and time-state merging are additions here;
-this is not a clean-room reimplementation. Independently expressed elementary repeat/center helpers do not erase
-any underlying rights obligations. Before public distribution, a company maintainer must confirm ownership and
-authority to relicense the source and tests; this local preparation does not establish that authority.
+this is not a clean-room reimplementation. The repeat and center helpers are expressed locally; the package still adapts the company source and tests.
+Apache-2.0 is the explicit coordinator assumption used for this preparation.

@@ -9,5 +9,5 @@
     "react": "19.3.0",
     "react-native": "0.88.1"
   },
-  "packageManager": "pnpm@11.15.1"
+  "packageManager": "pnpm@12.21.0"
 }

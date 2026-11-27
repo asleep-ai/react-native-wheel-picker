@@ -5,3 +5,7 @@ nodeLinker: hoisted
 # Prebuilt optional platform packages provide the binary; the source-build script is unneeded.
 allowBuilds:
   "@parcel/watcher": false
+
+# oxfmt pins the vulnerable worker pool; retain its API-compatible security patch.
+overrides:
+  "oxfmt>tinypool": 2.1.2
